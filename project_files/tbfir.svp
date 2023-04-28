@@ -180,7 +180,7 @@ end
 
 initial begin
     $dumpfile("fir.vcd");
-    $dumpvars(9,top);
+    $dumpvars(9,fir1);
 end
 
 firc fir1(Clk,Reset,PushIn,StopIn,SampI,SampQ,PushCoef,CoefAddr,
@@ -188,6 +188,6 @@ firc fir1(Clk,Reset,PushIn,StopIn,SampI,SampQ,PushCoef,CoefAddr,
 
 endmodule : top
 
-`include "firc.v"
+`include "firc.sv"
 
 
