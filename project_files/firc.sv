@@ -50,7 +50,7 @@ module firc(
         endcase
     end
 
-    //State logic for idle
+    //State logic for control signals
     always_ff @ (posedge Clk) begin
         if(cur_state == idle) begin
             FI = 0;
@@ -58,9 +58,13 @@ module firc(
             PushOut = 0;
             StopIn = 0;
         end
+
+        if(cur_state == mac) begin
+            PushOut = 1;
+        end
     end
 
-    //State logic for store_coef
+    //State logic for storing coefficients
     //3.24 format. One middle coef and first 14 coefs are mirrored.
     logic [26:0] coefI [15:1]; 
     logic [26:0] coefQ [15:1]; 
@@ -73,5 +77,4 @@ module firc(
             $display("Time: %dns \t CoefAddr: %d \t coefQ: %x \n", $realtime, CoefAddr, coefQ[CoefAddr]);
         end
     end
-
 endmodule : firc
