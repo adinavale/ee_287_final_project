@@ -27,8 +27,9 @@ module firc(
     reg  [23:0] SampI_datapath [28:0];          ///??? bits vs depth
     reg  [23:0] SampQ_datapath [28:0];          ///??? bits vs depth
     wire [23:0] SampI_in, SampQ_in;
+    wire fifo_empty, fifo_full;
 
-    assign StopIn = full;
+    assign StopIn = fifo_full;
 
     fifo sample_fifo(       //fifo
         Clk,    
@@ -39,8 +40,8 @@ module firc(
         PullOut,
         SampI_in,
         SampQ_in,
-        full,
-        empty
+        fifo_full,
+        fifo_empty
     );
 
     integer i;
@@ -76,19 +77,15 @@ module firc(
     endgenerate
 
     multiplier_fsm mult_fsm(    //control state machine 
-    //in
-        //empty
-        //PushCoef
-        //PushIn?
-    //internal signal
-        //ready
-    //out
-        //count_fsm
-        //PartialProduct Accumulate
-        //product accumulate and rounding -> moved to another fsm
-        //Product   ???
-        //PullOut_fsm
-        //PushOut_fsm                     -> moved to another fsm
+        Clk,
+        Reset,
+        PushIn,
+        PushCoef,
+        fifo_empty,
+        multiplier_mux_sel,
+        partialProductAccumulate_valid,
+        finalAccumulateRounding_en,
+        fifoPullOut
     );
 
     accumulator_fsm accumulate_fsm(
