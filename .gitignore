@@ -70,3 +70,5 @@ project_files/simv.daidir/debug_dump/AllModulesSkeletons.sdb
 project_files/simv.daidir/debug_dump/dumpcheck.db
 project_files/simv.daidir/debug_dump/topmodules
 project_files/simv.daidir/debug_dump/vir.sdb
+project_files/multiplier_fsm.sv
+project_files/simv
