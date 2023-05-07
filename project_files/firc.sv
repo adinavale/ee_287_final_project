@@ -1,4 +1,5 @@
 `timescale 1ns/10ps
+`include "fir_structs.sv"
 
 module firc(
     input logic Clk,

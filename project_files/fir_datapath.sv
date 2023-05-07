@@ -22,18 +22,6 @@ module fir_datapath(
     output logic [50:0] sub_prod_4
 );
 
-    //1.23 format
-    typedef struct packed{
-        logic [23:0] I; //real
-        logic [23:0] Q; //imaginary
-    } Sum;
-    
-    //4.47 format
-    typedef struct packed{
-        logic [50:0] I;
-        logic [50:0] Q;
-    } Partial_product;
-
     Sum sum[15]; //1.23 format
     Partial_product p_prod[15]; //4.47 format 
     Partial_product sub_prod[5]; //4.47 format
@@ -72,10 +60,10 @@ module fir_datapath(
     //Multiplier block
     always @ (*)  begin
         case(count)
-            0 : begin
+            0 : 
                 p_prod[0].I = sum[0].I * coef[0].I;
                 p_prod[0].Q = sum[0].Q * coef[0].Q;
-            end
+            
             1 : begin
                 p_prod[1].I = sum[1].I * coef[1].I;
                 p_prod[1].Q = sum[1].Q * coef[1].Q;
@@ -83,11 +71,11 @@ module fir_datapath(
             2 : begin
                 p_prod[2].I = sum[2].I * coef[2].I;
                 p_prod[2].Q = sum[2].Q * coef[2].Q;
-                
-                sub_prod[0].I = p_prod[0].I + p_prod[1].I + p_prod[2].I;
-                sub_prod[0].Q = p_prod[0].Q + p_prod[1].Q + p_prod[2].Q;
             end
         endcase
+
+        sub_prod[0].I = p_prod[0].I + p_prod[1].I + p_prod[2].I;
+        sub_prod[0].Q = p_prod[0].Q + p_prod[1].Q + p_prod[2].Q;
     end
     
     
@@ -194,8 +182,10 @@ module fir_datapath(
     always @ (*)  begin
         case(count)
             0 : begin
-                p_prod[9].I = sum[9].I * coef[9].I;
-                p_prod[9].Q = sum[9].Q * coef[9].Q;
+                // p_prod[9].I = sum[9].I * coef[9].I;
+                // p_prod[9].Q = sum[9].Q * coef[9].Q;
+                p_prod[9].I = sum[9].I * coef[9].I - sum[9].Q * coef[9].Q;
+                p_prod[9].Q = sum[9].Q * coef[9].I + sum[9].I * coef[9].Q;
             end
             1 : begin
                 p_prod[10].I = sum[10].I * coef[10].I;
