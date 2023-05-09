@@ -1,5 +1,7 @@
 `timescale 1ns/10ps
 `include "fir_structs.sv"
+`include "fir_datapath.sv"
+`include "fifo.sv"
 
 module firc(
     input logic Clk,
@@ -54,28 +56,27 @@ module firc(
     //State logic for control signals
     always_ff @ (posedge Clk) begin
         if(cur_state == idle) begin
-            FI = 0;
-            FQ = 0;
-            PushOut = 0;
-            StopIn = 0;
+            FI <= 0;
+            FQ <= 0;
+            PushOut <= 0;
+            StopIn <= 0;
         end
 
         if(cur_state == mac) begin
-            PushOut = 1;
+            PushOut <= 1;
         end
     end
 
     //State logic for storing coefficients
     //3.24 format. One middle coef and first 14 coefs are mirrored.
-    logic [26:0] coefI [15:1]; 
-    logic [26:0] coefQ [15:1]; 
+    Coef coef[15];
 
     always @ (*) begin
         if(cur_state == store_coef) begin
-            coefI[CoefAddr] = CoefI;
-            coefQ[CoefAddr] = CoefQ;
-            $display("Time: %dns \t CoefAddr: %d \t coefI: %x", $realtime, CoefAddr, coefI[CoefAddr]);
-            $display("Time: %dns \t CoefAddr: %d \t coefQ: %x \n", $realtime, CoefAddr, coefQ[CoefAddr]);
+            coef[CoefAddr - 1].I = CoefI;
+            coef[CoefAddr - 1].Q = CoefQ;
+            $display("Time: %dns \t CoefAddr: %d \t coefI: %x", $realtime, CoefAddr, coef[CoefAddr - 1].I);
+            $display("Time: %dns \t CoefAddr: %d \t coefQ: %x \n", $realtime, CoefAddr, coef[CoefAddr - 1].Q);
         end
     end
 
@@ -104,4 +105,40 @@ module firc(
             end
         end
     end
+
+    logic fifo_PullOut; //Handled in multiplier_fsm
+    logic fifo_full;
+    logic fifo_empty;
+    Samp fifo_samp;
+
+    fifo fifo_inst(
+        //Inputs
+        .Clk                (Clk),
+        .Reset              (Reset),
+        .PushIn             (PushIn),
+        .SampI              (SampI),
+        .SampQ              (SampQ),
+        .fifo_PullOut        (fifo_PullOut),
+
+        //Outputs
+        .fifo_samp          (fifo_samp),
+        .fifo_full          (fifo_full),
+        .fifo_empty         (fifo_empty)
+    );
+
+    Partial_product sub_prod[5];
+
+    fir_datapath datapath_inst(
+        .Clk                (Clk),
+        .Reset              (Reset),
+        .count              (), //TODO: ADD A COUNT SIGNAL INPUT
+        .samp               (cur_samp),
+        .coef               (coef),
+
+        .sub_prod_0         (sub_prod[0]),
+        .sub_prod_1         (sub_prod[1]),
+        .sub_prod_2         (sub_prod[2]),
+        .sub_prod_3         (sub_prod[3]),
+        .sub_prod_4         (sub_prod[4])
+    );
 endmodule : firc
