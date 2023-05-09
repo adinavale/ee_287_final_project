@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.61 (w)1999-2014 BSI
-[*] Tue May  9 22:10:33 2023
+[*] Tue May  9 22:14:12 2023
 [*]
 [dumpfile] "/home/015313389@SJSUAD.SJSU.EDU/ee_287_final_project/project_files/fir.vcd"
-[dumpfile_mtime] "Tue May  9 22:09:05 2023"
-[dumpfile_size] 12948
+[dumpfile_mtime] "Tue May  9 22:13:28 2023"
+[dumpfile_size] 12951
 [savefile] "/home/015313389@SJSUAD.SJSU.EDU/ee_287_final_project/project_files/wave_config.gtkw"
 [timestart] 0
 [size] 2560 1497
 [pos] -1 -1
-*-15.000000 106100 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-16.000000 258200 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.fir1.
 [sst_width] 229
@@ -45,10 +45,9 @@ top.fir1.fifo_inst.Clk
 top.fir1.fifo_inst.PushIn
 [color] 3
 top.fir1.fifo_inst.Reset
-@23
+@420
 [color] 3
 top.fir1.fifo_inst.SampI[23:0]
-@22
 [color] 3
 top.fir1.fifo_inst.SampQ[23:0]
 @28
@@ -56,8 +55,10 @@ top.fir1.fifo_inst.SampQ[23:0]
 top.fir1.fifo_inst.empty
 [color] 3
 top.fir1.fifo_inst.fifo_PullOut
+@29
 [color] 3
 top.fir1.fifo_inst.fifo_empty
+@28
 [color] 3
 top.fir1.fifo_inst.fifo_full
 @22
