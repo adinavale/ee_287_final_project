@@ -21,6 +21,10 @@ module fifo(
         if(Reset) begin
             read_ptr    <= 0;
             write_ptr   <= 0;
+            fifo_mem[0] <= 0;
+            fifo_mem[1] <= 0;
+            fifo_mem[2] <= 0;
+            fifo_mem[3] <= 0;
         end else begin
             //1. wr_en & !full => fifo[write_ptr] = data, write_ptr++
             if(PushIn && !full) begin
