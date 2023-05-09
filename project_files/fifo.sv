@@ -54,7 +54,7 @@ module fifo(
         fifo_samp.I  = fifo_mem[read_ptr].I;
         fifo_samp.Q  = fifo_mem[read_ptr].Q;
         fifo_full = full;
-        fifo_empty = fifo_empty;
+        fifo_empty = empty;
     end
 
 endmodule
