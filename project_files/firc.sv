@@ -27,6 +27,11 @@ module firc(
 
     data_state cur_state, n_state;
 
+    logic fifo_PullOut; //Handled in multiplier_fsm
+    logic fifo_full;
+    logic fifo_empty;
+    Samp fifo_samp;
+
     always_ff @ (posedge Clk) begin
         if(Reset) begin
             cur_state <= idle;
@@ -59,11 +64,6 @@ module firc(
             FI <= 0;
             FQ <= 0;
             PushOut <= 0;
-            StopIn <= 0;
-        end
-
-        if(cur_state == mac) begin
-            PushOut <= 1;
         end
     end
 
@@ -81,35 +81,32 @@ module firc(
     end
 
     //Handling of samples that are being input to the adders before they go through complex multiplies.
-    Samp cur_samp[29]; //1.23 format
+    Samp s[29]; //1.23 format
 
     always @ (posedge Clk or posedge Reset) begin
         if(cur_state == idle && Reset) begin
             for(int i = 0; i < 29; i = i + 1) begin
-                cur_samp[i] <= 0;
+                s[i] <= 0;
             end
-        end else if(cur_state == mac && PushIn) begin
-            //Shift out the oldest sample
-            for(int i = 0; i < 28; i = i + 1) begin
-                cur_samp[i + 1].I <= cur_samp[i].I;
-                cur_samp[i + 1].Q <= cur_samp[i].Q;
-            end
+        end else if(cur_state == mac) begin //todo: dont accept on pushin
+            if(fifo_PullOut) begin
+                //Shift out the oldest sample
+                for(int i = 0; i < 28; i = i + 1) begin
+                    s[i + 1].I <= s[i].I;
+                    s[i + 1].Q <= s[i].Q;
+                end
 
-            //Shift in the newest sample
-            cur_samp[0].I <= SampI;
-            cur_samp[0].Q <= SampQ;
+                //Shift in the newest sample
+                s[0].I <= fifo_samp.I;
+                s[0].Q <= fifo_samp.Q;
 
-            //Display for debug
-            for(int i = 0; i < 29; i = i + 1) begin
-                $display("Time: %d ns \t cursamp[%d].I = %d \t cursamp[%d].Q = %d", $realtime, i, cur_samp[i].I, i, cur_samp[i].Q);
+                //Display for debug
+                for(int i = 0; i < 29; i = i + 1) begin
+                    $display("Time: %d ns \t s[%d].I = %d \t s[%d].Q = %d", $realtime, i, s[i].I, i, s[i].Q);
+                end
             end
         end
     end
-
-    logic fifo_PullOut; //Handled in multiplier_fsm
-    logic fifo_full;
-    logic fifo_empty;
-    Samp fifo_samp;
 
     fifo fifo_inst(
         //Inputs
@@ -118,7 +115,7 @@ module firc(
         .PushIn             (PushIn),
         .SampI              (SampI),
         .SampQ              (SampQ),
-        .fifo_PullOut        (fifo_PullOut),
+        .fifo_PullOut       (fifo_PullOut),
 
         //Outputs
         .fifo_samp          (fifo_samp),
@@ -126,13 +123,22 @@ module firc(
         .fifo_empty         (fifo_empty)
     );
 
+    //StopIn logic
+    always @ (*) begin
+        if( (cur_state == mac) && (fifo_full) ) begin
+            StopIn = 1;
+        end else begin
+            StopIn = 0;
+        end
+    end
+
     Partial_product sub_prod[5];
 
     fir_datapath datapath_inst(
         .Clk                (Clk),
         .Reset              (Reset),
-        .count              (), //TODO: ADD A COUNT SIGNAL INPUT
-        .samp               (cur_samp),
+        .count              (), //todo: fix this
+        .samp               (s),
         .coef               (coef),
 
         .sub_prod_0         (sub_prod[0]),

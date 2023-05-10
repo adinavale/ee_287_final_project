@@ -1,4 +1,3 @@
-`include "fir_structs.sv" //todo: remove this when it is ready to be incorporated into design
 `timescale 1ns/10ps
 
 module fir_datapath(
@@ -6,20 +5,19 @@ module fir_datapath(
     input logic Reset,
     
     //Control signals from state machine
-    input logic [1:0] count, 
-    input logic valid,
+    input int count, 
     
     //Control signal for when data is being pulled from the FIFO
 //    input logic PullOut, 
     
     input Samp samp[29],
-    input Coef coef[14],
+    input Coef coef[15],
 
-    output logic [50:0] sub_prod_0,
-    output logic [50:0] sub_prod_1,
-    output logic [50:0] sub_prod_2,
-    output logic [50:0] sub_prod_3,
-    output logic [50:0] sub_prod_4
+    output Partial_product sub_prod_0,
+    output Partial_product sub_prod_1,
+    output Partial_product sub_prod_2,
+    output Partial_product sub_prod_3,
+    output Partial_product sub_prod_4
 );
 
     Sum sum[15]; //1.23 format
@@ -60,10 +58,10 @@ module fir_datapath(
     //Multiplier block
     always @ (*)  begin
         case(count)
-            0 : 
+            0 : begin
                 p_prod[0].I = sum[0].I * coef[0].I;
                 p_prod[0].Q = sum[0].Q * coef[0].Q;
-            
+            end
             1 : begin
                 p_prod[1].I = sum[1].I * coef[1].I;
                 p_prod[1].Q = sum[1].Q * coef[1].Q;

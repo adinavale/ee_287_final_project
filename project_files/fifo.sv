@@ -15,7 +15,7 @@ module fifo(
 
     logic full, empty;
     logic [2:0] read_ptr, write_ptr;        //1 bit extra for full/empty distinction
-    Samp fifo_mem[4];
+    Samp fifo_mem[8];
 
     always_ff @ (posedge Clk or posedge Reset) begin
         if(Reset) begin
