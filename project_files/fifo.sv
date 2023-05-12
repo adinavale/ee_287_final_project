@@ -60,5 +60,5 @@ module fifo(
         fifo_full = full;
         fifo_empty = empty;
     end
-
+//edits
 endmodule

@@ -4,7 +4,7 @@
 
 module top();
 
-const reg debug=0;
+const reg debug=1;
 
 `protected
 Ab^cEVN)^WO_\?[FT\0/N=Id;5C@5?#Qc<K->P,L6cR;.5-#e@IP6)0aT:c&Q@8K
