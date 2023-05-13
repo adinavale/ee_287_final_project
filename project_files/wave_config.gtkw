@@ -1,23 +1,21 @@
 [*]
 [*] GTKWave Analyzer v3.3.61 (w)1999-2014 BSI
-[*] Tue May  9 22:14:12 2023
+[*] Sat May 13 04:06:04 2023
 [*]
 [dumpfile] "/home/015313389@SJSUAD.SJSU.EDU/ee_287_final_project/project_files/fir.vcd"
-[dumpfile_mtime] "Tue May  9 22:13:28 2023"
-[dumpfile_size] 12951
+[dumpfile_mtime] "Sat May 13 03:42:13 2023"
+[dumpfile_size] 135831
 [savefile] "/home/015313389@SJSUAD.SJSU.EDU/ee_287_final_project/project_files/wave_config.gtkw"
 [timestart] 0
 [size] 2560 1497
-[pos] -1 -1
-*-16.000000 258200 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -1280 -113
+*-18.000000 540000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.fir1.
 [sst_width] 229
-[signals_width] 225
+[signals_width] 316
 [sst_expanded] 1
 [sst_vpaned_height] 942
-@28
-top.fir1.Clk
 @24
 top.fir1.CoefAddr[4:0]
 @22
@@ -35,10 +33,6 @@ top.fir1.SampI[23:0]
 top.fir1.SampQ[23:0]
 @28
 top.fir1.StopIn
-@24
-top.fir1.cur_state[31:0]
-top.fir1.n_state[31:0]
-@28
 [color] 3
 top.fir1.fifo_inst.Clk
 [color] 3
@@ -55,10 +49,8 @@ top.fir1.fifo_inst.SampQ[23:0]
 top.fir1.fifo_inst.empty
 [color] 3
 top.fir1.fifo_inst.fifo_PullOut
-@29
 [color] 3
 top.fir1.fifo_inst.fifo_empty
-@28
 [color] 3
 top.fir1.fifo_inst.fifo_full
 @22
@@ -71,5 +63,55 @@ top.fir1.fifo_inst.full
 top.fir1.fifo_inst.read_ptr[2:0]
 [color] 3
 top.fir1.fifo_inst.write_ptr[2:0]
+[color] 7
+top.fir1.datapath.clk
+@22
+[color] 7
+top.fir1.datapath.FI[31:0]
+[color] 7
+top.fir1.datapath.FQ[31:0]
+@28
+[color] 7
+top.fir1.datapath.PushOut
+[color] 7
+top.fir1.datapath.finalAccumulateRounding_en
+@22
+[color] 7
+top.fir1.datapath.fullProduct[75:0]
+@28
+[color] 7
+top.fir1.datapath.mux_sel[1:0]
+[color] 7
+top.fir1.datapath.partialProductAccumulate_valid
+[color] 7
+top.fir1.datapath.reset
+@22
+[color] 7
+top.fir1.datapath.roundedProduct[75:0]
+@28
+top.fir1.fsm.PushCoef
+top.fir1.fsm.PushIn
+@22
+top.fir1.fsm.accum_state[31:0]
+@28
+top.fir1.fsm.clk
+top.fir1.fsm.fifoPullOut
+top.fir1.fsm.fifo_empty
+top.fir1.fsm.finalAccumulateRounding_en
+top.fir1.fsm.group_count[1:0]
+@22
+top.fir1.fsm.mult_state[31:0]
+@28
+top.fir1.fsm.multiplier_mux_sel[1:0]
+@22
+top.fir1.fsm.next_accum_state[31:0]
+top.fir1.fsm.next_mult_state[31:0]
+@28
+top.fir1.fsm.p_prod_count
+top.fir1.fsm.partialProductAccumulate_valid
+top.fir1.fsm.processing
+top.fir1.fsm.reset
+top.fir1.fsm.wait_count
+top.fir1.fsm.waiting
 [pattern_trace] 1
 [pattern_trace] 0
