@@ -7,8 +7,8 @@ module fir_datapath(
     //Control signals from state machine
     input [1:0] mux_sel, 
         
-    input Samp samp[29],
-    input Coef coef[15],
+    input Samp [28:0] samp,
+    input Coef [14:0] coef,
 
     input partialProductAccumulate_valid,
     input finalAccumulateRounding_en,
@@ -30,12 +30,12 @@ module fir_datapath(
     Full_Product    fullProduct;    //9.29
     Full_Product    roundedProduct; //9.29
     
-    //-- debug--//
+    //-- debug--//]
     reg [37:0] expected_output = 38'b00000000000110011001100110011001;
     reg [37:0] expected_RoundProd = 38'b00000000000110011001100110011001;
     reg [51:0] expected_subProd = 52'b000000000000000011001100110011001100100000;
     reg [51:0] expected_p_prod = 52'b000000000000000011001100110011001100100000;
-
+    wire [23:0] samp0 = samp[0].I;
     wire [24:0] sum0 = sum[0].I;
     wire [26:0] coef0 = coef[0].I;
     wire [51:0] p_prod0 = p_prod[0].I;
