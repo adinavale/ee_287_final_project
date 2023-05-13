@@ -23,8 +23,8 @@ module firc(
 );
 
     
-    Coef coef[14:0];    //3.24 format. One middle coef and first 14 coefs are mirrored.
-    Samp s[28:0];       //1.23 format
+    Coef [14:0] coef;    //3.24 format. One middle coef and first 14 coefs are mirrored.
+    Samp [28:0] s;       //1.23 format
 
 
     wire fifoPullOut; //Handled in multiplier_fsm
@@ -37,13 +37,13 @@ module firc(
 
 //---------------- Coeff storing ---------------------------------//
     always@(posedge clk) begin
-        if(PushCoef && CoefAddr < 15) begin
-            coef[CoefAddr[3:0]].I    <= CoefI;
-            coef[CoefAddr[3:0]].Q    <= CoefQ;
-            //coef[28 - CoefAddr[3:0]] <= CoefI;
-            //coef[28 - CoefAddr[3:0]] <= CoefQ;
-            $display("Time: %dns \t CoefAddr: %d \t coefI: %x", $realtime, CoefAddr-1, coef[CoefAddr-1].I);
-            $display("Time: %dns \t CoefAddr: %d \t coefQ: %x \n", $realtime, CoefAddr-1, coef[CoefAddr-1].Q);
+        if(PushCoef && CoefAddr <= 15 && CoefAddr>0) begin
+            coef[CoefAddr[3:0] - 1].I    <= CoefI;      //because addr is 1-15 
+            coef[CoefAddr[3:0] - 1].Q    <= CoefQ;      //not 0-14
+            //coef[28 - CoefAddr[3:0]] <= CoefI;        //but coef is defined
+            //coef[28 - CoefAddr[3:0]] <= CoefQ;        //as 0-14
+            $display("Time: %dns \t CoefAddr: %d \t coefI: %x", $realtime, CoefAddr, coef[CoefAddr-1].I);
+            $display("Time: %dns \t CoefAddr: %d \t coefQ: %x \n", $realtime, CoefAddr, coef[CoefAddr-1].Q);
         end
     end
 //---------------------------------------------------------------//
