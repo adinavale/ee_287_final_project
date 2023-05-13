@@ -40,10 +40,10 @@ module firc(
         if(PushCoef && CoefAddr < 15) begin
             coef[CoefAddr[3:0]].I    <= CoefI;
             coef[CoefAddr[3:0]].Q    <= CoefQ;
-            coef[28 - CoefAddr[3:0]] <= CoefI;
-            coef[28 - CoefAddr[3:0]] <= CoefQ;
-            $display("Time: %dns \t CoefAddr: %d \t coefI: %x", $realtime, CoefAddr, coef[CoefAddr - 1].I);
-            $display("Time: %dns \t CoefAddr: %d \t coefQ: %x \n", $realtime, CoefAddr, coef[CoefAddr - 1].Q);
+            //coef[28 - CoefAddr[3:0]] <= CoefI;
+            //coef[28 - CoefAddr[3:0]] <= CoefQ;
+            $display("Time: %dns \t CoefAddr: %d \t coefI: %x", $realtime, CoefAddr-1, coef[CoefAddr-1].I);
+            $display("Time: %dns \t CoefAddr: %d \t coefQ: %x \n", $realtime, CoefAddr-1, coef[CoefAddr-1].Q);
         end
     end
 //---------------------------------------------------------------//
@@ -109,7 +109,7 @@ module firc(
 
         .FI                 (FI),
         .FQ                 (FQ),
-        .PushOut            (PushOut)
+        .PushOut_o          (PushOut)
     );
 //assign PushOut = 1'b0;
 //---------------------------------------------------------------//
