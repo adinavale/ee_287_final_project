@@ -68,7 +68,7 @@ module firc(
 
             //Display for debug
             for(int i = 0; i < 29; i = i + 1) begin
-                $display("Time: %d ns \t s[%d].I = %d \t s[%d].Q = %d", $realtime, i, s[i].I, i, s[i].Q);
+                $display("Time: %d ns \t s[%d].I = %b \t s[%d].Q = %b", $realtime, i, s[i].I, i, s[i].Q);
             end
         end
     end
