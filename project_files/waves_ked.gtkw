@@ -1,0 +1,33 @@
+[*]
+[*] GTKWave Analyzer v3.3.61 (w)1999-2014 BSI
+[*] Fri May 12 04:12:53 2023
+[*]
+[dumpfile] "/home/016723603@SJSUAD.SJSU.EDU/287/ee_287_final_project/project_files/fir.vcd"
+[dumpfile_mtime] "Fri May 12 01:49:37 2023"
+[dumpfile_size] 135831
+[savefile] "/home/016723603@SJSUAD.SJSU.EDU/287/ee_287_final_project/project_files/waves_ked.gtkw"
+[timestart] 0
+[size] 1680 947
+[pos] -1 -1
+*-17.868479 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[sst_width] 229
+[signals_width] 134
+[sst_expanded] 1
+[sst_vpaned_height] 260
+@28
+top.fir1.PushCoef
+@22
+top.fir1.CoefAddr[4:0]
+top.fir1.CoefI[26:0]
+top.fir1.CoefQ[26:0]
+@28
+top.fir1.PushIn
+@22
+top.fir1.SampI[23:0]
+top.fir1.SampQ[23:0]
+@28
+top.fir1.StopIn
+top.fir1.PushOut
+[pattern_trace] 1
+[pattern_trace] 0
