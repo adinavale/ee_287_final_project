@@ -77,6 +77,9 @@ module fir_datapath(
                 sub_prod_d[block].I = (partialProductAccumulate_valid) ? p_prod[block].I + sub_prod[block].I : p_prod[block].I;
                 sub_prod_d[block].Q = (partialProductAccumulate_valid) ? p_prod[block].Q + sub_prod[block].Q : p_prod[block].Q;
             end
+            
+            always @ (posedge clk) 
+                sub_prod[block] <= sub_prod_d[block]; 
             //            ┌───┐
             //         ┌──┤mux├──────────────┐
             //         │  │   │              │
@@ -87,9 +90,6 @@ module fir_datapath(
             // │  x │     │  +  ├────┤prod│
             // │    ├─────┤     │    │    │
             // └────┘     └─────┘    └────┘
-            
-            always @ (posedge clk) 
-                sub_prod[block] <= sub_prod_d[block];           //??? Can I assign like this for a struct?
 
     // 3. Truncating the sub_products----------------------------------//
 
@@ -116,16 +116,12 @@ module fir_datapath(
     end
 
     // 5. Rounding----------------------------------------------------//
-    always@(posedge clk or posedge reset) begin
+    always@(*) begin //posedge clk or posedge reset) begin     //clocked or combinational?
         if(fullProduct.I) //negative
-            roundedProduct  <= fullProduct + 4'b1000; //rounding towards 0
-        else roundedProduct <= fullProduct;   
+            roundedProduct  = fullProduct + 4'b1000; //rounding towards 0
+        else roundedProduct = fullProduct;   
     end
 
-   
-    always @ * begin
-        PushOut_o = finalAccumulateRounding_en; //PushOut;
-    end
 
     always@(posedge clk or posedge reset) begin
         if(reset) begin
@@ -146,15 +142,23 @@ module fir_datapath(
         else mux_sel_flopped <= mux_sel;
     end
 
+    //PushOut 
+    always @ * begin
+        PushOut_o = PushOut & clk; //PushOut;
+    end
+
+    //Filter Output
+    assign FI_o = roundedProduct.I[36:5]; //FI;
+    assign FQ_o = roundedProduct.Q[36:5]; //FQ;
     always@(posedge clk or posedge reset) begin
         if(reset) begin
-            FQ_o <= 0;
-            FI_o <= 0;
+           // FQ_o <= 0;
+           // FI_o <= 0;
             FI_delay[0] <= 32'b0;
             FQ_delay[0] <= 32'b0;
         end else begin
-            FI_o <= FI; //FI_delay[0]; 
-            FQ_o <= FQ; //FQ_delay[0]; 
+        //    FI_o <= FI; //FI_delay[0]; 
+         //   FQ_o <= FQ; //FQ_delay[0]; 
             FI_delay[0] <= FI;
             FQ_delay[0] <= FQ;
             FI_delay[4:1] <= FI_delay[3:0];
