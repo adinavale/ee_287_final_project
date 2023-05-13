@@ -13,12 +13,14 @@ module fir_datapath(
     input partialProductAccumulate_valid,
     input finalAccumulateRounding_en,
 
-    output [31:0] FI,       //8.24 FilterOutput I
-    output [31:0] FQ,       //8.24 FilterOutput Q
+    output reg [31:0] FI_o,       //8.24 FilterOutput I
+    output reg [31:0] FQ_o,       //8.24 FilterOutput Q
     output reg PushOut_o
 
 );
-
+    reg [31:0] FI, FQ;
+    reg [31:0] FI_delay [4:0];
+    reg [31:0] FQ_delay [4:0];
     reg [1:0] mux_sel_flopped;
     reg [5:0] PushOut_delay;
     reg PushOut;
@@ -114,21 +116,27 @@ module fir_datapath(
     end
 
     // 5. Rounding----------------------------------------------------//
-    always@(*) begin
+    always@(posedge clk or posedge reset) begin
         if(fullProduct.I) //negative
-            roundedProduct = fullProduct + 4'b1000; //rounding towards 0
-        else roundedProduct= fullProduct;   
+            roundedProduct  <= fullProduct + 4'b1000; //rounding towards 0
+        else roundedProduct <= fullProduct;   
     end
 
-    assign FI = roundedProduct.I[36:5];
-    assign FQ = roundedProduct.Q[36:5];
+   
+    always @ * begin
+        PushOut_o = finalAccumulateRounding_en; //PushOut;
+    end
 
     always@(posedge clk or posedge reset) begin
-        if(reset)
+        if(reset) begin
             PushOut_delay <= 6'd0;
-        else begin
+            FQ <= 0;
+            FI <= 0;
+        end else begin
             PushOut_delay[0] <= PushOut;
             PushOut_delay[5:1]    <= PushOut_delay[4:0];   
+            FI <= #2 roundedProduct.I[36:5];
+            FQ <= #2 roundedProduct.Q[36:5];
         end
     end
 
@@ -138,8 +146,21 @@ module fir_datapath(
         else mux_sel_flopped <= mux_sel;
     end
 
-
-    assign PushOut_o = PushOut;
+    always@(posedge clk or posedge reset) begin
+        if(reset) begin
+            FQ_o <= 0;
+            FI_o <= 0;
+            FI_delay[0] <= 32'b0;
+            FQ_delay[0] <= 32'b0;
+        end else begin
+            FI_o <= FI; //FI_delay[0]; 
+            FQ_o <= FQ; //FQ_delay[0]; 
+            FI_delay[0] <= FI;
+            FQ_delay[0] <= FQ;
+            FI_delay[4:1] <= FI_delay[3:0];
+            FQ_delay[4:1] <= FQ_delay[3:0];
+        end
+    end
 
 endmodule : fir_datapath
 

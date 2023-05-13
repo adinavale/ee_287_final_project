@@ -1,3 +1,4 @@
+`include "fir_structs.sv"
 module control_fsm_tb(
 );
 

@@ -107,8 +107,8 @@ module firc(
         .partialProductAccumulate_valid(partialProductAccumulate_valid),
         .finalAccumulateRounding_en(finalAccumulateRounding_en),
 
-        .FI                 (FI),
-        .FQ                 (FQ),
+        .FI_o                 (FI),
+        .FQ_o                 (FQ),
         .PushOut_o          (PushOut)
     );
 //assign PushOut = 1'b0;
