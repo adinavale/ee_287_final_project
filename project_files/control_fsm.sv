@@ -10,7 +10,7 @@ module control_fsm(
     output reg   fifoPullOut
 );
 
-    reg [1:0] group_count;
+    reg [1:0] group_count_for_adding;
     parameter MULTIPLY_LATENCY = 2; //declare as a parameter
     reg wait_count;                 // MULTIPLY_LATENCY - 1;
     reg waiting;
@@ -35,7 +35,7 @@ module control_fsm(
     mult_state_type mult_state, next_mult_state;
     accum_state_type accum_state, next_accum_state;
 
-    assign multiplier_mux_sel = group_count;        //output
+    assign multiplier_mux_sel = group_count_for_adding;        //output
 
     always@(posedge clk, posedge reset) 
         if(reset) begin
@@ -49,8 +49,6 @@ module control_fsm(
 //Multiplier FSM
     always @ (*) begin 
         next_mult_state  = mult_state;
-        //partialProductAccumulate_valid = 0;
-        //finalAccumulateRounding_en  = 0;
         fifoPullOut = 0;
 
         case(mult_state) 
@@ -62,14 +60,12 @@ module control_fsm(
             end
 
             WaitForData: begin
-                //waits a cycle for pairs to be added
-                next_mult_state = Multiplying;
+                if(group_count_for_adding == 2'd2)
+                    next_mult_state = Multiplying;
             end
 
             Multiplying: begin
-                if(PushCoef)
-                    next_mult_state = idle;
-                else if(group_count == 2'd2) begin //think about the second condition, is it required?
+                if(waiting) begin
                     if(fifo_empty)
                         next_mult_state = idle;
                     else begin
@@ -81,20 +77,33 @@ module control_fsm(
         endcase
     end
 
-//Multiplier FSM
+//Multiplier FSM counts
     always@(posedge clk, posedge reset) begin
         if(reset) begin
-            group_count <=  0;
-            processing  <=  0;
+            group_count_for_adding <=  0;
+            waiting <= 0;
+        end else begin
+            if(mult_state == WaitForData) begin
+                if(group_count_for_adding != 2'd2) 
+                    group_count_for_adding <= group_count_for_adding + 1;
+                else begin
+                    group_count_for_adding <= 0;                    
+                end 
+            end
+        end
+    end
+
+    always@(posedge clk, posedge reset) begin
+        if(reset) begin
+            waiting <=  0;
         end else begin
             if(mult_state == Multiplying) begin
-                if(group_count != 2'd2) 
-                    group_count <= group_count + 1;
+                if(!waiting) 
+                    waiting <= 1;
                 else begin
-                    group_count <= 0;                    
-                    processing  <= 1;
+                    waiting  <= 0;                    
                 end 
-            end else processing <= 0;
+            end
         end
     end
 
@@ -106,7 +115,7 @@ module control_fsm(
 
         case(accum_state) 
             idle : begin
-                if(processing) 
+                if(mult_state == Multiplying) 
                     next_accum_state = PartialProductsAccumulation;
             end
 

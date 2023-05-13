@@ -37,13 +37,13 @@ module firc(
 
 //---------------- Coeff storing ---------------------------------//
     always@(posedge clk) begin
-        if(PushCoef && CoefAddr <= 15 && CoefAddr>0) begin
-            coef[CoefAddr[3:0] - 1].I    <= CoefI;      //because addr is 1-15 
-            coef[CoefAddr[3:0] - 1].Q    <= CoefQ;      //not 0-14
+        if(PushCoef && CoefAddr < 15) begin
+            coef[CoefAddr[3:0]].I    <= CoefI;      //because addr is 1-15 
+            coef[CoefAddr[3:0]].Q    <= CoefQ;      //not 0-14
             //coef[28 - CoefAddr[3:0]] <= CoefI;        //but coef is defined
             //coef[28 - CoefAddr[3:0]] <= CoefQ;        //as 0-14
-            $display("Time: %dns \t CoefAddr: %d \t coefI: %x", $realtime, CoefAddr, coef[CoefAddr-1].I);
-            $display("Time: %dns \t CoefAddr: %d \t coefQ: %x \n", $realtime, CoefAddr, coef[CoefAddr-1].Q);
+            $display("Time: %dns \t CoefAddr: %d \t coefI: %x", $realtime, CoefAddr, coef[CoefAddr].I);
+            $display("Time: %dns \t CoefAddr: %d \t coefQ: %x \n", $realtime, CoefAddr, coef[CoefAddr].Q);
         end
     end
 //---------------------------------------------------------------//
