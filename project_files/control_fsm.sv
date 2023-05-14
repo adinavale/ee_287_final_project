@@ -7,7 +7,8 @@ module control_fsm(
     output [1:0] multiplier_mux_sel,
     output reg   partialProductAccumulate_valid,
     output reg   finalAccumulateRounding_en,
-    output reg   fifoPullOut
+    output reg   fifoPullOut,
+    output reg   multiplier_idle
 );
 
     reg [1:0] group_count_for_adding;
@@ -50,9 +51,11 @@ module control_fsm(
     always @ (*) begin 
         next_mult_state  = mult_state;
         fifoPullOut = 0;
+        multiplier_idle = 0;
 
         case(mult_state) 
             idle : begin
+                multiplier_idle = 1;
                 if(!fifo_empty) begin
                     fifoPullOut = 1;
                     next_mult_state  = WaitForData;
