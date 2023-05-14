@@ -175,6 +175,7 @@ initial begin
         #5;
     end
     $display("Ran out of clocks");
+    $display("dont use me, use the new tbfir_new!");
     $finish();
 end
 
@@ -186,8 +187,9 @@ end
 firc fir1(Clk,Reset,PushIn,StopIn,SampI,SampQ,PushCoef,CoefAddr,
     CoefI,CoefQ,PushOut,FI,FQ);
 
+
 endmodule : top
 
-`include "firc.sv"
+`include "firc.v"
 
 
