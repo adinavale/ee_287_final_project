@@ -129,7 +129,7 @@ module fir_datapath(
             FQ <= 0;
             FI <= 0;
         end else begin
-            PushOut_delay[0] <= PushOut;
+            PushOut_delay[0]      <= PushOut;
             PushOut_delay[5:1]    <= PushOut_delay[4:0];   
             FI <= #2 roundedProduct.I[36:5];
             FQ <= #2 roundedProduct.Q[36:5];
