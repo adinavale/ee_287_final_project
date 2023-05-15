@@ -13,12 +13,12 @@ module fifo(
 );
 
     //debug signals
-    reg fifo_samp_I  = fifo_samp.I;
-    reg fifo_samp_Q  = fifo_samp.Q;
-    reg fifo_data0_I = fifo_mem[0].I;
-    reg fifo_data1_I = fifo_mem[1].I;
-    reg fifo_data2_I = fifo_mem[2].I;
-    reg fifo_data3_I = fifo_mem[3].I;
+    wire fifo_samp_I  = fifo_samp.I;
+    wire fifo_samp_Q  = fifo_samp.Q;
+    wire fifo_data0_I = fifo_mem[0].I;
+    wire fifo_data1_I = fifo_mem[1].I;
+    wire fifo_data2_I = fifo_mem[2].I;
+    wire fifo_data3_I = fifo_mem[3].I;
 
     logic full, empty;
     logic [2:0] read_ptr, write_ptr;        //1 bit extra for full/empty distinction
