@@ -48,9 +48,9 @@ module firc(
         end
     end
 
-    always@(posedge PushIn) begin
-        coef <= coef_temp;
-    end
+    //always@(posedge PushIn) begin
+    //    coef <= coef_temp;
+    //end
 //---------------------------------------------------------------//
 
 
@@ -152,9 +152,9 @@ always @ (posedge clk or posedge reset) begin
 end
 */
 
-/*
+
 reg new_coefs;
-reg [1:0] waiting_to_shift_new_coefs;
+reg [2:0] waiting_to_shift_new_coefs;
 always @ (posedge PushIn or negedge PushIn) begin
     if(PushIn) begin
         new_coefs   <= 1;
@@ -163,15 +163,19 @@ end
 
 always@(posedge clk or posedge Reset) begin
     if(Reset)
-        waiting_to_shift_new_coefs <= 2'd3;
-    if(new_coefs && waiting_to_shift_new_coefs != 2'b0)
+        waiting_to_shift_new_coefs <= 3'd2;
+    if(new_coefs && waiting_to_shift_new_coefs != 3'b0)
         waiting_to_shift_new_coefs <= waiting_to_shift_new_coefs - 1;
-    else waiting_to_shift_new_coefs <= 2'd3;
-    if(waiting_to_shift_new_coefs == 2'b0)
+    else begin
+        if(multiplier_idle)
+            waiting_to_shift_new_coefs <= 3'd2;
+        else waiting_to_shift_new_coefs <= 3'd5;
+    end
+    if(waiting_to_shift_new_coefs == 3'b0)
         coef <= coef_temp;
 end
 
-*/
+
 
 
 //---------------- Debug ---------------------------------------//
