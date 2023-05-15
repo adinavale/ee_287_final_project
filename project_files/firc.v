@@ -46,8 +46,10 @@ module firc(
             $display("Time: %dns \t CoefAddr: %d \t coefI: %x", $realtime, CoefAddr, coef[CoefAddr].I);
             $display("Time: %dns \t CoefAddr: %d \t coefQ: %x \n", $realtime, CoefAddr, coef[CoefAddr].Q);
         end
-        if(multiplier_idle)
-            coef <= coef_temp;
+    end
+
+    always@(posedge PushIn) begin
+        coef <= coef_temp;
     end
 //---------------------------------------------------------------//
 
@@ -131,6 +133,45 @@ module firc(
         multiplier_idle
     );
 //---------------------------------------------------------------//
+
+
+//Coef tracking
+// shifted -> -> -> -> -> shift
+// if (shift == shifted) coef <= coef_temp;
+/*
+reg shifted, shift;
+
+always @ (posedge clk or posedge reset) begin
+    if(reset) begin
+        shifted <= 0;
+        shift   <= 0;
+    end else begin
+        if()
+            shift <= shifted;
+    end
+end
+*/
+
+/*
+reg new_coefs;
+reg [1:0] waiting_to_shift_new_coefs;
+always @ (posedge PushIn or negedge PushIn) begin
+    if(PushIn) begin
+        new_coefs   <= 1;
+    end else new_coefs = 0;
+end
+
+always@(posedge clk or posedge Reset) begin
+    if(Reset)
+        waiting_to_shift_new_coefs <= 2'd3;
+    if(new_coefs && waiting_to_shift_new_coefs != 2'b0)
+        waiting_to_shift_new_coefs <= waiting_to_shift_new_coefs - 1;
+    else waiting_to_shift_new_coefs <= 2'd3;
+    if(waiting_to_shift_new_coefs == 2'b0)
+        coef <= coef_temp;
+end
+
+*/
 
 
 //---------------- Debug ---------------------------------------//
