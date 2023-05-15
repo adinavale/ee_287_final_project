@@ -18,10 +18,12 @@ module fir_datapath(
     output reg PushOut_o
 
 );
+
     reg [31:0] FI, FQ;
     reg [31:0] FI_delay [4:0];
     reg [31:0] FQ_delay [4:0];
     reg [1:0] mux_sel_flopped;
+    Coef [14:0] coef_muxed;
     reg [5:0] PushOut_delay;
     reg PushOut;
     Sum sum[4:0];                   //2.23 format
@@ -113,9 +115,14 @@ module fir_datapath(
             end
         end
 
+        always@(posedge clk) begin
+            coef_muxed[block] <= coef[block*3 + mux_sel];
+        end
+
     // 2. Multiplying--------------------------------------------------//
 
-            complexMultiplier multiplier_block(clk, sum[block], coef[mux_sel_flopped + block*3], p_prod[block]);
+            //complexMultiplier multiplier_block(clk, sum[block], coef[mux_sel_flopped + block*3], p_prod[block]);
+            complexMultiplier multiplier_block(clk, sum[block], coef_muxed[block], p_prod[block]);
 
             always @ (*) begin
                 sub_prod_d[block].I = (partialProductAccumulate_valid) ? p_prod[block].I + sub_prod[block].I : p_prod[block].I;
