@@ -4,7 +4,7 @@
 `include "fifo.sv"
 `include "control_fsm.sv"
 `include "complexMultiplier.sv" 
-`include "DW02_mult_2_stage.v"
+//`include "DW02_mult_2_stage.v"
 
 module firc(
     input logic clk,
@@ -18,8 +18,8 @@ module firc(
     input logic signed [26:0] CoefI,
     input logic signed [26:0] CoefQ,
     output logic PushOut,
-    output  [31:0] FI,
-    output  [31:0] FQ
+    output signed [31:0] FI,
+    output signed [31:0] FQ
 );
 
     
@@ -41,10 +41,6 @@ module firc(
         if(PushCoef && CoefAddr < 15) begin
             coef_temp[CoefAddr[3:0]].I    <= CoefI;      //because addr is 1-15 
             coef_temp[CoefAddr[3:0]].Q    <= CoefQ;      //not 0-14
-            //coef[28 - CoefAddr[3:0]] <= CoefI;        //but coef is defined
-            //coef[28 - CoefAddr[3:0]] <= CoefQ;        //as 0-14
-            $display("Time: %dns \t CoefAddr: %d \t coefI: %x", $realtime, CoefAddr, coef[CoefAddr].I);
-            $display("Time: %dns \t CoefAddr: %d \t coefQ: %x \n", $realtime, CoefAddr, coef[CoefAddr].Q);
         end
     end
 
@@ -73,7 +69,7 @@ module firc(
 
             //Display for debug
             for(int i = 0; i < 29; i = i + 1) begin
-                $display("Time: %d ns \t s[%d].I = %b \t s[%d].Q = %b", $realtime, i, s[i].I, i, s[i].Q);
+              //  $display("Time: %d ns \t s[%d].I = %b \t s[%d].Q = %b", $realtime, i, s[i].I, i, s[i].Q);
             end
         end
     end
@@ -152,29 +148,32 @@ always @ (posedge clk or posedge reset) begin
 end
 */
 
-
-reg new_coefs;
+//----------Handling new coef shifting----------//
+wire new_coefs;
 reg [2:0] waiting_to_shift_new_coefs;
-always @ (posedge PushIn or negedge PushIn) begin
-    if(PushIn) begin
-        new_coefs   <= 1;
-    end else new_coefs = 0;
-end
+assign new_coefs = PushIn;
+// always @ (posedge PushIn or negedge PushIn) begin
+//     if(PushIn) begin
+//         new_coefs   <= 1;
+//     end else new_coefs = 0;
+// end
 
 always@(posedge clk or posedge Reset) begin
     if(Reset)
         waiting_to_shift_new_coefs <= 3'd2;
-    if(new_coefs && waiting_to_shift_new_coefs != 3'b0)
+    else if(new_coefs && waiting_to_shift_new_coefs != 3'b0)
         waiting_to_shift_new_coefs <= waiting_to_shift_new_coefs - 1;
     else begin
         if(multiplier_idle)
             waiting_to_shift_new_coefs <= 3'd2;
         else waiting_to_shift_new_coefs <= 3'd5;
     end
-    if(waiting_to_shift_new_coefs == 3'b0)
-        coef <= coef_temp;
 end
-
+always@(posedge clk) begin
+    if(waiting_to_shift_new_coefs == 3'b0)
+    coef <= coef_temp;
+end
+//---------------------------------------------------------------//
 
 
 

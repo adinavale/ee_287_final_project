@@ -13,8 +13,8 @@ module fir_datapath(
     input partialProductAccumulate_valid,
     input finalAccumulateRounding_en,
 
-    output reg [31:0] FI_o,       //8.24 FilterOutput I
-    output reg [31:0] FQ_o,       //8.24 FilterOutput Q
+    output reg signed [31:0] FI_o,       //8.24 FilterOutput I
+    output reg signed [31:0] FQ_o,       //8.24 FilterOutput Q
     output reg PushOut_o
 
 );
@@ -34,67 +34,68 @@ module fir_datapath(
     Full_Product    fullProduct;    //9.29
     Full_Product    roundedProduct; //9.29
     
-    //-- debug--//]
-    reg [37:0] expected_output = 38'b00000000000011110000011111101100100011;
-    reg [37:0] expected_RoundProd = 38'b00000000000011110000011111101100100011;
-    reg [51:0] expected_subProd = 52'b0000000011110000011111101100100011000000000000000000;
-    reg [51:0] expected_p_prod = 52'b000000000000000011001100110011001100100000;
-    wire [23:0] samp0 = samp[0].I;
-    wire [23:0] samp1 = samp[1].I;
-    wire [23:0] samp2 = samp[2].I;
-    wire [23:0] samp3 = samp[3].I;
-    wire [23:0] samp4 = samp[4].I;
-    wire [23:0] samp5 = samp[5].I;
-    wire [23:0] samp6 = samp[6].I;
-    wire [23:0] samp7 = samp[7].I;
-    wire [23:0] samp8 = samp[8].I;
-    wire [23:0] samp9 = samp[9].I;
-    wire [23:0] samp10 = samp[10].I;
-    wire [23:0] samp11 = samp[11].I;
-    wire [23:0] samp12 = samp[12].I;
-    wire [23:0] samp13 = samp[13].I;
-    wire [23:0] samp14 = samp[14].I;
-    wire [23:0] samp15 = samp[15].I;
-    wire [23:0] samp16 = samp[16].I;
-    wire [23:0] samp17 = samp[17].I;
-    wire [23:0] samp18 = samp[18].I;
-    wire [23:0] samp19 = samp[19].I;
-    wire [23:0] samp20 = samp[20].I;
-    wire [23:0] samp21 = samp[21].I;
-    wire [23:0] samp22 = samp[22].I;
-    wire [23:0] samp23 = samp[23].I;
-    wire [23:0] samp24 = samp[24].I;
-    wire [23:0] samp25 = samp[25].I;
-    wire [23:0] samp26 = samp[26].I;
-    wire [23:0] samp27 = samp[27].I;
-    wire [23:0] samp28 = samp[28].I;
+    //-- debug--//
+    wire signed [23:0] samp0 = samp[0].I;
+    wire signed [23:0] samp1 = samp[1].I;
+    wire signed [23:0] samp2 = samp[2].I;
+    wire signed [23:0] samp3 = samp[3].I;
+    wire signed [23:0] samp4 = samp[4].I;
+    wire signed [23:0] samp5 = samp[5].I;
+    wire signed [23:0] samp6 = samp[6].I;
+    wire signed [23:0] samp7 = samp[7].I;
+    wire signed [23:0] samp8 = samp[8].I;
+    wire signed [23:0] samp9 = samp[9].I;
+    wire signed [23:0] samp10 = samp[10].I;
+    wire signed [23:0] samp11 = samp[11].I;
+    wire signed [23:0] samp12 = samp[12].I;
+    wire signed [23:0] samp13 = samp[13].I;
+    wire signed [23:0] samp14 = samp[14].I;
+    wire signed [23:0] samp15 = samp[15].I;
+    wire signed [23:0] samp16 = samp[16].I;
+    wire signed [23:0] samp17 = samp[17].I;
+    wire signed [23:0] samp18 = samp[18].I;
+    wire signed [23:0] samp19 = samp[19].I;
+    wire signed [23:0] samp20 = samp[20].I;
+    wire signed [23:0] samp21 = samp[21].I;
+    wire signed [23:0] samp22 = samp[22].I;
+    wire signed [23:0] samp23 = samp[23].I;
+    wire signed [23:0] samp24 = samp[24].I;
+    wire signed [23:0] samp25 = samp[25].I;
+    wire signed [23:0] samp26 = samp[26].I;
+    wire signed [23:0] samp27 = samp[27].I;
+    wire signed [23:0] samp28 = samp[28].I;
 
-    wire [23:0] coef0 = coef[0].I;
-    wire [23:0] coef1 = coef[1].I;
-    wire [23:0] coef2 = coef[2].I;
-    wire [23:0] coef3 = coef[3].I;
-    wire [23:0] coef4 = coef[4].I;
-    wire [23:0] coef5 = coef[5].I;
-    wire [23:0] coef6 = coef[6].I;
-    wire [23:0] coef7 = coef[7].I;
-    wire [23:0] coef8 = coef[8].I;
-    wire [23:0] coef9 = coef[9].I;
-    wire [23:0] coef10 = coef[10].I;
-    wire [23:0] coef11 = coef[11].I;
-    wire [23:0] coef12 = coef[12].I;
-    wire [23:0] coef13 = coef[13].I;
-    wire [23:0] coef14 = coef[14].I;
-    wire [24:0] sum0 = sum[0].I;
-    wire [26:0] coef0 = coef[0].I;
-    wire [51:0] p_prod0 = p_prod[0].I;
-    wire [51:0] p_prod1 = p_prod[1].I;
-    wire [51:0] p_prod2 = p_prod[2].I;
-    wire [51:0] subProd0 = sub_prod[0].I;
-    wire [37:0] truncatedSubProduct0 = truncatedSubProduct[0].I;
-    wire [37:0] truncatedSubProduct1 = truncatedSubProduct[1].I;
-    wire [37:0] truncatedSubProduct2 = truncatedSubProduct[2].I;
-    wire [37:0] truncatedSubProduct3 = truncatedSubProduct[3].I;
-    wire [37:0] truncatedSubProduct4 = truncatedSubProduct[4].I;
+    wire signed [23:0] coef0 = coef[0].I;
+    wire signed [23:0] coef1 = coef[1].I;
+    wire signed [23:0] coef2 = coef[2].I;
+    wire signed [23:0] coef3 = coef[3].I;
+    wire signed [23:0] coef4 = coef[4].I;
+    wire signed [23:0] coef5 = coef[5].I;
+    wire signed [23:0] coef6 = coef[6].I;
+    wire signed [23:0] coef7 = coef[7].I;
+    wire signed [23:0] coef8 = coef[8].I;
+    wire signed [23:0] coef9 = coef[9].I;
+    wire signed [23:0] coef10 = coef[10].I;
+    wire signed [23:0] coef11 = coef[11].I;
+    wire signed [23:0] coef12 = coef[12].I;
+    wire signed [23:0] coef13 = coef[13].I;
+    wire signed [23:0] coef14 = coef[14].I;
+    wire signed [24:0] sum0 = sum[0].I;
+    wire signed [51:0] p_prod0 = p_prod[0].Q;
+    wire signed [51:0] p_prod1 = p_prod[1].Q;
+    wire signed [51:0] p_prod2 = p_prod[2].Q;
+    wire signed [51:0] subProd0 = sub_prod[0].Q;
+    wire signed [51:0] subProd1 = sub_prod[1].Q;
+    wire signed [51:0] subProd2 = sub_prod[2].Q;
+    wire signed [51:0] subProd3 = sub_prod[3].Q;
+    wire signed [51:0] subProd4 = sub_prod[4].Q;
+    wire signed [37:0] truncatedSubProduct0 = truncatedSubProduct[0].Q;
+    wire signed [37:0] truncatedSubProduct1 = truncatedSubProduct[1].Q;
+    wire signed [37:0] truncatedSubProduct2 = truncatedSubProduct[2].Q;
+    wire signed [37:0] truncatedSubProduct3 = truncatedSubProduct[3].Q;
+    wire signed [37:0] truncatedSubProduct4 = truncatedSubProduct[4].Q;
+    wire signed [37:0] fullProduct_debug = fullProduct.Q;
+    wire signed [37:0] roundedProduct_debug = roundedProduct.Q;
 
 
     //---------------- DataPath starts---------------------------------//
@@ -125,8 +126,8 @@ module fir_datapath(
             complexMultiplier multiplier_block(clk, sum[block], coef_muxed[block], p_prod[block]);
 
             always @ (*) begin
-                sub_prod_d[block].I = (partialProductAccumulate_valid) ? p_prod[block].I + sub_prod[block].I : p_prod[block].I;
-                sub_prod_d[block].Q = (partialProductAccumulate_valid) ? p_prod[block].Q + sub_prod[block].Q : p_prod[block].Q;
+                sub_prod_d[block].I = (partialProductAccumulate_valid) ? $signed( p_prod[block].I + sub_prod[block].I ) : p_prod[block].I;
+                sub_prod_d[block].Q = (partialProductAccumulate_valid) ? $signed( p_prod[block].Q + sub_prod[block].Q ) : p_prod[block].Q;
             end
             
             always @ (posedge clk) 
@@ -143,7 +144,7 @@ module fir_datapath(
             // └────┘     └─────┘    └────┘
 
     // 3. Truncating the sub_products----------------------------------//
-
+            //5.47 -> 9.29
             always @ (*) begin
                 truncatedSubProduct[block].I = {{4{sub_prod[block].I[51]}}, sub_prod[block].I[51:18]};    //9.29
                 truncatedSubProduct[block].Q = {{4{sub_prod[block].Q[51]}}, sub_prod[block].Q[51:18]};    //9.29
@@ -160,17 +161,23 @@ module fir_datapath(
             PushOut     <= 0;
         end else if(finalAccumulateRounding_en) begin   //5-input 9.29 38bit adder
             PushOut       <= 1;
-            fullProduct.I <= truncatedSubProduct[0].I + truncatedSubProduct[1].I + truncatedSubProduct[2].I + truncatedSubProduct[3].I + truncatedSubProduct[4].I;
-            fullProduct.Q <= truncatedSubProduct[0].Q + truncatedSubProduct[1].Q + truncatedSubProduct[2].Q + truncatedSubProduct[3].Q + truncatedSubProduct[4].Q;
+            fullProduct.I <= $signed( truncatedSubProduct[0].I + truncatedSubProduct[1].I + truncatedSubProduct[2].I + truncatedSubProduct[3].I + truncatedSubProduct[4].I);
+            fullProduct.Q <= $signed( truncatedSubProduct[0].Q + truncatedSubProduct[1].Q + truncatedSubProduct[2].Q + truncatedSubProduct[3].Q + truncatedSubProduct[4].Q);
         end else 
             PushOut  <= 0;
     end
 
     // 5. Rounding----------------------------------------------------//
-    always@(*) begin //posedge clk or posedge reset) begin     //clocked or combinational?
-        if(fullProduct.I) //negative
-            roundedProduct  = fullProduct + 4'b1000; //rounding towards 0
-        else roundedProduct = fullProduct;   
+    always@(*) begin //posedge clk or posedge reset) begin                          //clocked or combinational?
+        if(fullProduct.I[37]) //negative
+            roundedProduct.I  = fullProduct.I + 5'b10000; //rounding towards 0
+        else roundedProduct.I = fullProduct.I;    
+    end
+
+    always@(*) begin //posedge clk or posedge reset) begin                          //clocked or combinational?
+        if(fullProduct.Q[37]) //negative
+            roundedProduct.Q  = fullProduct.Q + 5'b10000; //rounding towards 0
+        else roundedProduct.Q = fullProduct.Q;   
     end
 
 

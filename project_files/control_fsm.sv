@@ -84,7 +84,6 @@ module control_fsm(
     always@(posedge clk, posedge reset) begin
         if(reset) begin
             group_count_for_adding <=  0;
-            waiting <= 0;
         end else begin
             if(mult_state == WaitForData) begin
                 if(group_count_for_adding != 2'd2) 

@@ -1,6 +1,7 @@
 // FIR project S'23 Test bench
 `timescale 1ns/10ps
-
+`include "DW02_mult_2_stage.v"
+`include "DW02_mult_3_stage.v"
 
 module top();
 
